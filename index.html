@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>商品交易可视化仪表盘</title>
+    <link rel="stylesheet" href="./styles.css?v=20260505-2307">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">本地离线模式</p>
+          <h1>商品交易可视化仪表盘</h1>
+        </div>
+        <div class="top-actions">
+          <label class="file-button" for="fileInput">
+            <span aria-hidden="true">+</span>
+            导入 CSV
+          </label>
+          <input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain" hidden>
+          <button id="sampleBtn" type="button">示例数据</button>
+          <button id="clearBtn" type="button" class="ghost">清空</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="status-band" aria-live="polite">
+          <div>
+            <span class="status-dot"></span>
+            <strong id="datasetName">示例数据</strong>
+          </div>
+          <div id="privacyText">数据仅在本机浏览器内处理，不上传、不保存。</div>
+        </section>
+
+        <section id="mappingPanel" class="mapping-panel" hidden>
+          <div>
+            <p class="section-kicker">字段映射</p>
+            <h2>确认交易字段</h2>
+          </div>
+          <div class="mapping-grid">
+            <label>日期<select id="dateColumn"></select></label>
+            <label>商品<select id="productColumn"></select></label>
+            <label>交易量<select id="quantityColumn"></select></label>
+            <label>交易价格<select id="priceColumn"></select></label>
+            <label>交易金额<select id="amountColumn"></select></label>
+          </div>
+        </section>
+
+        <section class="filters-panel">
+          <div class="filter-group">
+            <label>开始日期<input id="startDate" type="date"></label>
+            <label>结束日期<input id="endDate" type="date"></label>
+            <label>聚合周期
+              <select id="periodSelect">
+                <option value="day">按日</option>
+                <option value="week">按周</option>
+                <option value="month" selected>按月</option>
+                <option value="quarter">按季度</option>
+                <option value="year">按年</option>
+              </select>
+            </label>
+            <label>价格均线
+              <select id="rollingSelect">
+                <option value="0">关闭</option>
+                <option value="3" selected>3 期</option>
+                <option value="6">6 期</option>
+                <option value="12">12 期</option>
+              </select>
+            </label>
+          </div>
+          <div class="product-filter">
+            <label>商品筛选<input id="productSearch" type="search" placeholder="输入商品名"></label>
+            <select id="productSelect" multiple size="5" aria-label="商品筛选"></select>
+            <button id="allProductsBtn" type="button" class="ghost">全部商品</button>
+          </div>
+        </section>
+
+        <section id="kpiGrid" class="kpi-grid"></section>
+
+        <section class="insights-band">
+          <div>
+            <p class="section-kicker">自动洞察</p>
+            <h2>交易表现摘要</h2>
+          </div>
+          <div id="insightsList" class="insights-list"></div>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="chart-panel wide">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">趋势</p>
+                <h2>交易量与价格波动</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="trendChart">导出 SVG</button>
+            </div>
+            <div id="trendChart" class="chart"></div>
+          </article>
+
+          <article class="chart-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">排行</p>
+                <h2>商品贡献</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="productBarChart">导出 SVG</button>
+            </div>
+            <div id="productBarChart" class="chart"></div>
+          </article>
+
+          <article class="chart-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">结构</p>
+                <h2>价格分布</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="histogramChart">导出 SVG</button>
+            </div>
+            <div id="histogramChart" class="chart"></div>
+          </article>
+
+          <article class="chart-panel wide">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">金额</p>
+                <h2>交易额走势</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="amountChart">导出 SVG</button>
+            </div>
+            <div id="amountChart" class="chart"></div>
+          </article>
+
+          <article class="chart-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">关系</p>
+                <h2>量价散点</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="scatterChart">导出 SVG</button>
+            </div>
+            <div id="scatterChart" class="chart"></div>
+          </article>
+
+          <article class="chart-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">季节性</p>
+                <h2>月度热力图</h2>
+              </div>
+              <button class="ghost small" type="button" data-export="heatmapChart">导出 SVG</button>
+            </div>
+            <div id="heatmapChart" class="chart"></div>
+          </article>
+        </section>
+
+        <section class="tables-grid">
+          <article class="table-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">风险</p>
+                <h2>异常波动</h2>
+              </div>
+            </div>
+            <div id="anomalyTable" class="table-wrap"></div>
+          </article>
+
+          <article class="table-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">质量</p>
+                <h2>数据检查</h2>
+              </div>
+              <button id="exportSummaryBtn" class="ghost small" type="button">导出汇总 CSV</button>
+            </div>
+            <div id="qualityTable" class="table-wrap"></div>
+          </article>
+        </section>
+
+        <section class="table-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-kicker">明细</p>
+              <h2>交易数据预览</h2>
+            </div>
+          </div>
+          <div id="previewTable" class="table-wrap preview"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="tooltip" class="tooltip" hidden></div>
+    <script src="./app.js?v=20260505-2307"></script>
+  </body>
+</html>
