@@ -66,11 +66,7 @@ python3 tools/xlsx_to_csv.py input.xlsx output.csv
 
 转换脚本只读取第一个工作表，适合常规明细表。复杂合并单元格、公式未缓存值、隐藏工作表等情况建议先在 Excel 里另存为 CSV。
 
-## 发布到 GitHub 前检查
 
-建议只发布这个项目目录，并确认待提交文件中没有任何客户名称、合同、订单、价格明细或内部材料。
-
-检查命令：
 
 ```bash
 git status --short
